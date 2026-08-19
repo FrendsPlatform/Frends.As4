@@ -6,7 +6,7 @@ namespace Frends.As4.SendMessage.Attributes;
 
 /// <summary>
 /// Validates that a property is required if another property has a specific value.
-/// If a property is null, empty, or white space only, validation fails.
+/// If a property is null, empty, or white space only, validation fails
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
 internal class RequiredIfAttribute(string dependentProperty, params object[] targetValues) : ValidationAttribute
