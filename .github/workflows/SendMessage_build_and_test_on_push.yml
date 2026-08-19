@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'Frends.As4.SendMessage/**'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 jobs:
