@@ -2,12 +2,11 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Frends.As4.SendMessage\Frends.As4.SendMessage.csproj" />
+        <ProjectReference Include="..\Frends.As4.SendMessage\Frends.As4.SendMessage.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -15,14 +14,14 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-        <PackageReference Include="NUnit" Version="4.3.2" />
-        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0"/>
+        <PackageReference Include="NUnit" Version="4.3.2"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0"/>
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="docker\receiver\**\*.cs" />
+        <Compile Remove="docker\receiver\**\*.cs"/>
         <None Include="certs\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
