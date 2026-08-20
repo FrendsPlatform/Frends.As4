@@ -1,28 +1,25 @@
-using System;
-using dotenv.net;
+using System.Collections.Generic;
 using Frends.As4.ValidateAndParsePayload.Definitions;
 
 namespace Frends.As4.ValidateAndParsePayload.Tests;
 
 internal abstract class TestBase
 {
-    internal TestBase()
+    protected const string DefaultErrorMessage = "Error occurred";
+
+    protected static Input EmptyInput() => new();
+
+    protected static Input InvalidMessage() => new()
     {
-        // TODO: Here you can load environment variables used in tests
-        DotEnv.Load();
-        SecretKey = GetEnvVar("FRENDS_SECRET_KEY");
-    }
-
-    // TODO: Replace with your secret key or remove if not needed
-    protected string SecretKey { get; set; }
-
-    protected static Input DefaultInput() => new();
+        Headers = new Dictionary<string, string> { ["Content-Type"] = "application/soap+xml" },
+        Body = "this is not a valid AS4 ebMS message"u8.ToArray(),
+    };
 
     protected static Connection DefaultConnection() => new();
 
-    protected static Options DefaultOptions() => new();
-
-    private static string GetEnvVar(string name) => Environment.GetEnvironmentVariable(name) ??
-                                                    throw new InvalidOperationException(
-                                                        $"Missing required env var: {name}");
+    protected static Options DefaultOptions() => new()
+    {
+        ThrowErrorOnFailure = false,
+        ErrorMessageOnFailure = DefaultErrorMessage,
+    };
 }

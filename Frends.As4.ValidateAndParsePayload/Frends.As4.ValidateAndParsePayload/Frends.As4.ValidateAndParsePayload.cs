@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.IO;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Frends.As4.ValidateAndParsePayload.Definitions;
 using Frends.As4.ValidateAndParsePayload.Helpers;
+using nsoftware.async.IPWorksEDI;
 
 namespace Frends.As4.ValidateAndParsePayload;
 
@@ -13,16 +17,16 @@ namespace Frends.As4.ValidateAndParsePayload;
 public static class As4
 {
     /// <summary>
-    /// Task to validate an incoming AS4 message, extracts the EDI payload, and generates an MDN receipt
+    /// Task to validate an incoming AS4 message, extract the EDI payload, and generate a receipt.
     /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends-As4-ValidateAndParsePayload)
     /// </summary>
     /// <param name="input">Essential parameters.</param>
     /// <param name="connection">Connection parameters.</param>
     /// <param name="options">Additional parameters.</param>
     /// <param name="cancellationToken">A cancellation token provided by Frends Platform.</param>
-    /// <returns>object { bool Success, string Output, object Error { string Message, Exception AdditionalInfo } }</returns>
-    // TODO: Remove Connection parameter if the task does not make connections
-    public static Result ValidateAndParsePayload(
+    /// <returns>object {
+    /// bool Success, string Payload, string As4From, string As4To, string MessageId, ReceiptData Receipt, object Error { string Message, Exception AdditionalInfo } }</returns>
+    public static async Task<Result> ValidateAndParsePayload(
         [PropertyTab] Input input,
         [PropertyTab] Connection connection,
         [PropertyTab] Options options,
@@ -30,27 +34,54 @@ public static class As4
     {
         try
         {
-            ValidationHandler.Run(input, connection, options);
+            ValidationHandler.Run(input, connection);
 
-            // Cancellation token should be provided to methods that support it
-            // and checked during long-running operations, e.g., loops
-            cancellationToken.ThrowIfCancellationRequested();
+            var as4 = NSoftware.Activation.NSoftware.ActivateAs4Server();
+            as4.RequestHeadersString = ConvertHeadersToString(input.Headers);
 
-            if (input.Repeat < 0)
-                throw new Exception("Repeat count cannot be negative.");
+            using var ms = new MemoryStream(input.Body);
+            await as4.SetRequestStream(ms, cancellationToken);
 
-            var output = string.Join(options.Delimiter, Enumerable.Repeat(input.Content, input.Repeat));
+            if (connection.RequireSigned)
+                as4.SignerCert = new Certificate(connection.PartnerCertificatePath);
+
+            if (connection.RequireSigned || connection.RequireEncrypted)
+            {
+                as4.Certificate = new Certificate(
+                    CertStoreTypes.cstPFXFile,
+                    connection.OwnCertificatePath,
+                    connection.OwnCertificatePassword,
+                    "*");
+            }
+
+            await as4.ParseRequest(cancellationToken);
 
             return new Result
             {
                 Success = true,
-                Output = output,
-                Error = null,
+                As4From = as4.AS4From?.Id,
+                As4To = as4.AS4To?.Id,
+                MessageId = as4.MessageId,
+                Payload = as4.EDIData.Count > 0 ? as4.EDIData[0].Data : null,
+                Receipt = new ReceiptData
+                {
+                    Content = as4.Receipt?.Content,
+                    RefToMessageId = as4.Receipt?.RefToMessageId,
+                },
             };
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return ex.Handle(options);
+            return e.Handle(options);
         }
+    }
+
+    internal static string ConvertHeadersToString(Dictionary<string, string> headers)
+    {
+        var sb = new StringBuilder();
+        foreach (var kvp in headers)
+            sb.Append($"{kvp.Key}: {kvp.Value}\r\n");
+
+        return sb.ToString();
     }
 }

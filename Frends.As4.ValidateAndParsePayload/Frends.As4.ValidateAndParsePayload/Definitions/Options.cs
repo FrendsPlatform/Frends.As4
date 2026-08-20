@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Frends.As4.ValidateAndParsePayload.Definitions;
@@ -8,14 +8,6 @@ namespace Frends.As4.ValidateAndParsePayload.Definitions;
 /// </summary>
 public class Options
 {
-    /// <summary>
-    /// Delimiter to use between the repeated strings.
-    /// </summary>
-    /// <example>,</example>
-    [DisplayFormat(DataFormatString = "Text")]
-    [DefaultValue(" ")]
-    public string Delimiter { get; set; }
-
     /// <summary>
     /// Whether to throw an error on failure.
     /// </summary>
