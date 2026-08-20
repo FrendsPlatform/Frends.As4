@@ -1,0 +1,2 @@
+# Treat all .bin test data files as binary to preserve exact byte content
+*.bin binary
