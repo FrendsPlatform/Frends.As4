@@ -20,16 +20,9 @@ internal class NotEmptyAttribute : ValidationAttribute
     {
         var displayName = validationContext.DisplayName;
 
-        if (value is null)
-            return new ValidationResult(ErrorMessage ?? $"{displayName} must not be empty.");
-
-        if (value is string s && string.IsNullOrWhiteSpace(s))
-            return new ValidationResult(ErrorMessage ?? $"{displayName} must not be empty.");
-
-        if (value is ICollection collection && collection.Count == 0)
+        if (value is null || (value is string s && string.IsNullOrWhiteSpace(s)) || value is ICollection { Count: 0 })
             return new ValidationResult(ErrorMessage ?? $"{displayName} must not be empty.");
 
         return ValidationResult.Success;
     }
 }
-

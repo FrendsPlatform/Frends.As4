@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Frends.As4.ValidateAndParsePayload.Attributes;
 
 namespace Frends.As4.ValidateAndParsePayload.Definitions;

@@ -18,9 +18,15 @@ internal class FunctionalTests : TestBase
             DefaultOptions(),
             CancellationToken.None);
 
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.Error, Is.Not.Null);
-        Assert.That(result.Error.Message, Does.Contain("Validation failed"));
+        Assert.That(
+            result.Success,
+            Is.False);
+        Assert.That(
+            result.Error,
+            Is.Not.Null);
+        Assert.That(
+            result.Error.Message,
+            Does.Contain("Validation failed"));
     }
 
     [Test]
@@ -29,7 +35,7 @@ internal class FunctionalTests : TestBase
         var options = DefaultOptions();
         options.ThrowErrorOnFailure = true;
 
-        Assert.ThrowsAsync<System.Exception>((System.Func<System.Threading.Tasks.Task>)(async () =>
+        Assert.ThrowsAsync<System.Exception>((System.Func<Task>)(async () =>
             await As4.ValidateAndParsePayload(
                 EmptyInput(),
                 DefaultConnection(),
@@ -46,8 +52,12 @@ internal class FunctionalTests : TestBase
             DefaultOptions(),
             CancellationToken.None);
 
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.Error.Message, Does.Contain(DefaultErrorMessage));
+        Assert.That(
+            result.Success,
+            Is.False);
+        Assert.That(
+            result.Error.Message,
+            Does.Contain(DefaultErrorMessage));
     }
 
     [Test]
@@ -59,9 +69,15 @@ internal class FunctionalTests : TestBase
             DefaultOptions(),
             CancellationToken.None);
 
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.Error, Is.Not.Null);
-        Assert.That(result.Error.AdditionalInfo, Is.Not.Null);
+        Assert.That(
+            result.Success,
+            Is.False);
+        Assert.That(
+            result.Error,
+            Is.Not.Null);
+        Assert.That(
+            result.Error.AdditionalInfo,
+            Is.Not.Null);
     }
 
     [Test]
@@ -75,35 +91,25 @@ internal class FunctionalTests : TestBase
 
         var result = As4.ConvertHeadersToString(headers);
 
-        Assert.That(result, Is.EqualTo("Content-Type: application/soap+xml\r\nSOAPAction: \"\"\r\n"));
+        Assert.That(
+            result,
+            Is.EqualTo("Content-Type: application/soap+xml\r\nSOAPAction: \"\"\r\n"));
     }
 
-    /// <summary>
-    /// Reads a real AS4/ebMS3 MIME message from disk and verifies that all fields
-    /// are parsed correctly.
-    ///
-    /// Expected message values (see TestData/sample_as4_message.mime):
-    ///   As4From    = "SenderParty"
-    ///   As4To      = "ReceiverParty"
-    ///   MessageId  = "testmessage-001@frends.com"
-    ///   Payload    = "Hello AS4 World! This is the test payload for Frends AS4 task."
-    /// </summary>
     [Test]
     public async Task Should_Parse_Valid_As4_Message_From_File()
     {
-        // ---- arrange -------------------------------------------------------
         var testFilePath = Path.Combine(
             TestContext.CurrentContext.TestDirectory,
             "TestData",
             "sample_as4_message.mime");
 
-        Assert.That(File.Exists(testFilePath), Is.True,
+        Assert.That(
+            File.Exists(testFilePath),
+            Is.True,
             $"Test data file not found: {testFilePath}");
 
         var body = await File.ReadAllBytesAsync(testFilePath);
-
-        // The Content-Type header must reference the same MIME boundary that is
-        // used inside the file and must point to the root SOAP part.
         var headers = new Dictionary<string, string>
         {
             ["Content-Type"] =
@@ -113,36 +119,46 @@ internal class FunctionalTests : TestBase
                 "start=\"<rootpart@frends.com>\"",
         };
 
-        var input = new Frends.As4.ValidateAndParsePayload.Definitions.Input
+        var input = new Definitions.Input
         {
             Headers = headers,
             Body = body,
         };
 
-        // ---- act -----------------------------------------------------------
         var result = await As4.ValidateAndParsePayload(
             input,
             DefaultConnection(),
             DefaultOptions(),
             CancellationToken.None);
 
-        // ---- assert --------------------------------------------------------
-        Assert.That(result.Success, Is.True,
+        Assert.That(
+            result.Success,
+            Is.True,
             $"Parsing failed: {result.Error?.Message}\n{result.Error?.AdditionalInfo}");
 
-        Assert.That(result.As4From, Is.EqualTo("SenderParty"),
+        Assert.That(
+            result.As4From,
+            Is.EqualTo("SenderParty"),
             "AS4 sender party (From) did not match expected value.");
 
-        Assert.That(result.As4To, Is.EqualTo("ReceiverParty"),
+        Assert.That(
+            result.As4To,
+            Is.EqualTo("ReceiverParty"),
             "AS4 receiver party (To) did not match expected value.");
 
-        Assert.That(result.MessageId, Is.EqualTo("testmessage-001@frends.com"),
+        Assert.That(
+            result.MessageId,
+            Is.EqualTo("testmessage-001@frends.com"),
             "MessageId did not match expected value.");
 
-        Assert.That(result.Payload, Does.Contain("Hello AS4 World!"),
+        Assert.That(
+            result.Payload,
+            Does.Contain("Hello AS4 World!"),
             "Payload content did not match expected value.");
 
-        Assert.That(result.Receipt, Is.Not.Null,
+        Assert.That(
+            result.Receipt,
+            Is.Not.Null,
             "Receipt should be generated for a valid UserMessage.");
     }
 }

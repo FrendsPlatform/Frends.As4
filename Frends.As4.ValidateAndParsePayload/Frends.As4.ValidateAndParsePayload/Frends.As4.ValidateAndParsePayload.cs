@@ -79,8 +79,8 @@ public static class As4
     internal static string ConvertHeadersToString(Dictionary<string, string> headers)
     {
         var sb = new StringBuilder();
-        foreach (var kvp in headers)
-            sb.Append($"{kvp.Key}: {kvp.Value}\r\n");
+        foreach (var header in headers)
+            sb.Append($"{header.Key}: {header.Value}\r\n");
 
         return sb.ToString();
     }
