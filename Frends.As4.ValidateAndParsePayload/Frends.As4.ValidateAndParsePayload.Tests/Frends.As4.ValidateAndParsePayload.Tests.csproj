@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include=".\testData\**\*">
+        <None Include=".\TestData\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
