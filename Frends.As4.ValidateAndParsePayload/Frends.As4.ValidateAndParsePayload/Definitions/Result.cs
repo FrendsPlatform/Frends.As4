@@ -14,8 +14,8 @@ public class Result
     /// <summary>
     /// Decrypted/decompressed business data (EDI/XML/JSON) extracted from the first AS4 payload.
     /// </summary>
-    /// <example>This is a nice test message :)</example>
-    public string Payload { get; set; }
+    /// <example>["This is a nice test message :)"]</example>
+    public string[] Payloads { get; set; } = [];
 
     /// <summary>
     /// AS4 sender party identifier.

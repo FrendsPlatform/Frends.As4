@@ -86,7 +86,7 @@ internal abstract class TestBase
             $"Parsing failed: {result.Error?.Message} {result.Error?.AdditionalInfo}");
         Assert.That(result.As4From, Is.EqualTo(ExpectedFrom));
         Assert.That(result.As4To, Is.EqualTo(ExpectedTo));
-        Assert.That(result.Payload, Does.Contain(ExpectedPayload));
+        Assert.That(result.Payloads[0], Does.Contain(ExpectedPayload));
         Assert.That(result.Receipt, Is.Not.Null);
     }
 }

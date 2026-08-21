@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,7 @@ public static class As4
             }
 
             await as4.ParseRequest(cancellationToken);
+            var payloads = as4.EDIData.Select(x => x.Data).ToArray();
 
             return new Result
             {
@@ -62,7 +64,7 @@ public static class As4
                 As4From = as4.AS4From?.Id,
                 As4To = as4.AS4To?.Id,
                 MessageId = as4.MessageId,
-                Payload = as4.EDIData.Count > 0 ? as4.EDIData[0].Data : null,
+                Payloads = payloads,
                 Receipt = new ReceiptData
                 {
                     Content = as4.Receipt?.Content,
