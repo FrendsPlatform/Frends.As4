@@ -1,11 +1,10 @@
-[//]: # (Update this file with actual SystemName and ActionName)
-# Frends.{SystemName}
+# Frends.As4
 
-Frends tasks for {SystemName} related operations.
+Frends tasks for AS4 related operations.
 
 # Tasks
 
-- [Frends.{SystemName}.{ActionName}](Frends.{SystemName}.{ActionName}/README.md)
+- [Frends.As4.SendMessage](Frends.As4.SendMessage/README.md)
 
 # Contributing
 

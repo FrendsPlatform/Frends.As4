@@ -1,0 +1,17 @@
+services:
+  as4-receiver:
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    working_dir: /opt/as4-receiver
+    command:
+      - dotnet
+      - As4TestReceiver.dll
+    ports:
+      - "4080:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - ./receiver/bin/Debug/net8.0:/opt/as4-receiver:ro
+      - ../certs:/opt/certs:ro
+      - ./data:/opt/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
