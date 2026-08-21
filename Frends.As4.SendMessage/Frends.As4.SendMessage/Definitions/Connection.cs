@@ -73,5 +73,5 @@ public class Connection
     [Required]
     [DisplayFormat(DataFormatString = "Text")]
     [DefaultValue("text/plain")]
-    public string ContentTypeHeader { get; set; }
+    public string ContentTypeHeader { get; set; } = "text/plain";
 }

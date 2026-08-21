@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Frends.As4.SendMessage.Definitions;
 using nsoftware.async.IPWorksEDI;
 
@@ -90,7 +91,7 @@ internal static class As4Handler
         }
     }
 
-    internal static void ConfigurePayload(
+    internal static async Task ConfigurePayload(
         AS4Client as4,
         Input input,
         Connection connection,
@@ -102,7 +103,7 @@ internal static class As4Handler
             Name = Path.GetFileName(input.MessageFilePath),
         };
 
-        data.Data = File.ReadAllText(input.MessageFilePath!);
+        data.Data = await File.ReadAllTextAsync(input.MessageFilePath!, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
         as4.EDIData.Add(data);
     }

@@ -34,7 +34,7 @@ public static class As4
             var as4 = NSoftware.Activation.NSoftware.ActivateAs4Client();
             As4Handler.ConfigureMessage(as4, input, connection, options);
             As4Handler.ConfigureSecurity(as4, connection);
-            As4Handler.ConfigurePayload(as4, input, connection, cancellationToken);
+            await As4Handler.ConfigurePayload(as4, input, connection, cancellationToken);
             As4Handler.ConfigureLogging(as4, options);
 
             await as4.SendFiles(cancellationToken);
