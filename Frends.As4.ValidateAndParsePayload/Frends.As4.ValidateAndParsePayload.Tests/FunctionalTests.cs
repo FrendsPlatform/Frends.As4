@@ -60,7 +60,7 @@ internal class FunctionalTests : TestBase
     }
 
     [Test]
-    public async Task Should_Return_First_Payload_When_Message_Contains_Multiple_Payloads()
+    public async Task Should_Return_All_Payloads_When_Message_Contains_Multiple_Payloads()
     {
         var testFilePath = Path.Combine(
             TestContext.CurrentContext.TestDirectory,
