@@ -5,6 +5,7 @@ Frends tasks for AS4 related operations.
 # Tasks
 
 - [Frends.As4.SendMessage](Frends.As4.SendMessage/README.md)
+- [Frends.As4.ValidateAndParsePayload](Frends.As4.ValidateAndParsePayload/README.md)
 
 # Contributing
 

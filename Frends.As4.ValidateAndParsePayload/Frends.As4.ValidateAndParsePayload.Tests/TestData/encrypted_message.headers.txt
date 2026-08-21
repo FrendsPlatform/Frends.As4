@@ -1,0 +1,6 @@
+﻿Connection: close
+Content-Length: 5436
+Content-Type: multipart/related; boundary="NSMIMEBoundary__e5666bb9-52bb-4ea3-aac3-1ae46ec3308d"; type="application/soap+xml"; start="<_159b8c0a-ebfd-436f-9817-4cda76b2743e>"
+Accept-Encoding: gzip, deflate
+Host: localhost:53654
+User-Agent: IPWorks EDI AS4Client Component - www.nsoftware.com

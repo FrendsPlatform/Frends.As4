@@ -1,0 +1,12 @@
+﻿[
+  {
+    "Task": "Frends.As4.ValidateAndParsePayload",
+    "Migrations": [
+      {
+        "Version": "1.0.0",
+        "Description": "",
+        "Migration": []
+      }
+    ]
+  }
+]
