@@ -1,5 +1,10 @@
 using System;
 using System.IO;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 using Frends.As4.SendMessage.Definitions;
 
 namespace Frends.As4.SendMessage.Tests;
@@ -28,6 +33,41 @@ public static class TestSetup
             AgreementRef = "TestAgreementRef",
             ContentTypeHeader = "text/plain",
         };
+
+    public static Connection HttpsConnection()
+    {
+        var connection = Connection();
+        connection.As4EndpointUrl = "https://localhost:4443";
+
+        return connection;
+    }
+
+    public static async Task<string> GetServerCertificateBase64Async(CancellationToken token)
+    {
+        using var client = new TcpClient();
+        await client.ConnectAsync("localhost", 4443, token);
+
+        await using var ssl = new SslStream(client.GetStream(), false, (_, _, _, _) => true);
+        await ssl.AuthenticateAsClientAsync(
+            new SslClientAuthenticationOptions { TargetHost = "localhost" },
+            token);
+
+        using var certificate = new X509Certificate2(ssl.RemoteCertificate);
+        return Convert.ToBase64String(certificate.Export(X509ContentType.Cert));
+    }
+
+    public static string GetSenderCertificateBase64()
+    {
+        var pem = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "certs", "sender.pem"));
+        var der = Convert.FromBase64String(
+            pem.Replace("-----BEGIN CERTIFICATE-----", string.Empty)
+                .Replace("-----END CERTIFICATE-----", string.Empty)
+                .Replace("\r", string.Empty)
+                .Replace("\n", string.Empty));
+        using var certificate = new X509Certificate2(der);
+
+        return Convert.ToBase64String(certificate.Export(X509ContentType.Cert));
+    }
 
     public static Options Options() => new()
     {
