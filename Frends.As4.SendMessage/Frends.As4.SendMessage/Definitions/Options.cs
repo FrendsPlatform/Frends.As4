@@ -48,8 +48,9 @@ public class Options
     /// </summary>
     /// <example>MIIDXTCCAkWgAwIBAgIJAJC1H...</example>
     [DisplayFormat(DataFormatString = "Text")]
+    [DefaultValue("")]
     [UIHint(nameof(AllowInvalidCertificate), "", false)]
-    public string TrustedCertificateBase64 { get; set; }
+    public string TrustedCertificateBase64 { get; set; } = string.Empty;
 
     /// <summary>
     /// Whether to throw an error on failure.

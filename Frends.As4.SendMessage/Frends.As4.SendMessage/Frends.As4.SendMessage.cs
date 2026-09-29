@@ -31,7 +31,7 @@ public static class As4
         {
             ValidationHandler.Run(input, connection, options);
 
-            var as4 = NSoftware.Activation.NSoftware.ActivateAs4Client();
+            using var as4 = NSoftware.Activation.NSoftware.ActivateAs4Client();
             As4Handler.ConfigureMessage(as4, input, connection, options);
             As4Handler.ConfigureSecurity(as4, connection);
             await As4Handler.ConfigurePayload(as4, input, connection, cancellationToken);
