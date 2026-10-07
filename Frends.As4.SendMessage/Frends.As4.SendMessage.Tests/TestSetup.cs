@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Frends.As4.SendMessage.Definitions;
@@ -44,27 +45,23 @@ public static class TestSetup
 
     public static async Task<string> GetServerCertificateBase64Async(CancellationToken token)
     {
-        using var client = new TcpClient();
-        await client.ConnectAsync("localhost", 4443, token);
+        using var certificate = await GetServerCertificateAsync(token);
 
-        await using var ssl = new SslStream(client.GetStream(), false, (_, _, _, _) => true);
-        await ssl.AuthenticateAsClientAsync(
-            new SslClientAuthenticationOptions { TargetHost = "localhost" },
-            token);
-
-        using var certificate = new X509Certificate2(ssl.RemoteCertificate);
         return Convert.ToBase64String(certificate.Export(X509ContentType.Cert));
+    }
+
+    public static async Task<string> GetServerCertificatePemBase64Async(CancellationToken token)
+    {
+        using var certificate = await GetServerCertificateAsync(token);
+
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(certificate.ExportCertificatePem()));
     }
 
     public static string GetSenderCertificateBase64()
     {
-        var pem = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "certs", "sender.pem"));
-        var der = Convert.FromBase64String(
-            pem.Replace("-----BEGIN CERTIFICATE-----", string.Empty)
-                .Replace("-----END CERTIFICATE-----", string.Empty)
-                .Replace("\r", string.Empty)
-                .Replace("\n", string.Empty));
-        using var certificate = new X509Certificate2(der);
+        using var certificate = new X509Certificate2(
+            Path.Combine(AppContext.BaseDirectory, "certs", "sender.pfx"),
+            "sender123");
 
         return Convert.ToBase64String(certificate.Export(X509ContentType.Cert));
     }
@@ -86,4 +83,17 @@ public static class TestSetup
             "async-receipts",
             Guid.NewGuid().ToString("N")),
     };
+
+    private static async Task<X509Certificate2> GetServerCertificateAsync(CancellationToken token)
+    {
+        using var client = new TcpClient();
+        await client.ConnectAsync("localhost", 4443, token);
+
+        await using var ssl = new SslStream(client.GetStream(), false, (_, _, _, _) => true);
+        await ssl.AuthenticateAsClientAsync(
+            new SslClientAuthenticationOptions { TargetHost = "localhost" },
+            token);
+
+        return new X509Certificate2(ssl.RemoteCertificate);
+    }
 }
