@@ -25,6 +25,7 @@ internal static class As4Handler
             ? $"{input.SenderAs4Id}:{input.ReceiverAs4Id}"
             : connection.AgreementRef;
         as4.URL = connection.As4EndpointUrl;
+        ConfigureServerCertificateValidation(as4, options);
 
         var uri = new Uri(connection.As4EndpointUrl);
         as4.MessageId = $"{Guid.NewGuid()}@{uri.Host}";
@@ -65,6 +66,34 @@ internal static class As4Handler
 
             as4.MessageProperties.Add(new EBProperty(property.Name, property.Value));
         }
+    }
+
+    private static void ConfigureServerCertificateValidation(AS4Client as4, Options options)
+    {
+        if (options.AllowInvalidCertificate)
+        {
+            as4.OnSSLServerAuthentication += (_, e) => e.Accept = true;
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(options.TrustedCertificateBase64))
+        {
+            return;
+        }
+
+        byte[] trustedCertificateBytes;
+
+        try
+        {
+            trustedCertificateBytes = Convert.FromBase64String(options.TrustedCertificateBase64);
+        }
+        catch (FormatException ex)
+        {
+            throw new ArgumentException("TrustedCertificateBase64 is not a valid base64-encoded string.", ex);
+        }
+
+        as4.SSLAcceptServerCert = new Certificate(trustedCertificateBytes);
     }
 
     internal static void ConfigureSecurity(AS4Client as4, Connection connection)
